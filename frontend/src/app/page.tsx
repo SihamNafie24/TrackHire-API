@@ -4,142 +4,194 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import JobCard from '@/components/JobCard';
 import api from '@/lib/api';
-import { Search, MapPin, Building2, Filter, Loader2, XCircle } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, Briefcase, X } from 'lucide-react';
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [location, setLocation] = useState('');
-  const [company, setCompany] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
 
   const fetchJobs = async () => {
-    setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (search) params.append('search', search);
-      if (location) params.append('location', location);
-      if (company) params.append('company', company);
-
-      const response = await api.get(`/jobs?${params.toString()}`);
-      setJobs(response.data.data.jobs);
+      const response = await api.get('/jobs');
+      setJobs(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch jobs', error);
+      console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchJobs();
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, location, company]);
+  const filteredJobs = jobs.filter((job: any) =>
+    job.title.toLowerCase().includes(search.toLowerCase()) ||
+    job.company.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
-      {/* Hero Section */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight">
-            Find your next <span className="text-primary">dream job</span>
-          </h1>
-          <p className="mt-4 text-xl text-slate-600 max-w-2xl mx-auto">
-            Browse through hundreds of job listings from top companies and apply with just one click.
-          </p>
-        </div>
-      </div>
+      <main className="flex-1 pt-20">
+        {/* Hero Section */}
+        <section className="relative py-24 px-6 overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl">
+            <div className="absolute top-[-10%] right-[10%] w-[40%] h-[80%] bg-primary/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-[-10%] left-[10%] w-[40%] h-[80%] bg-secondary/10 rounded-full blur-[120px]" />
+          </div>
 
-      {/* Search & Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        <div className="bg-white p-4 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 grid md:grid-cols-10 gap-4">
-          <div className="md:col-span-4 relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-              <Search className="w-5 h-5" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search by job title or keywords..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent rounded-2xl focus:ring-2 focus:ring-primary/20 focus:bg-white focus:border-primary transition-all text-slate-900 text-sm"
-            />
-          </div>
-          <div className="md:col-span-2 relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-              <MapPin className="w-5 h-5" />
-            </div>
-            <input
-              type="text"
-              placeholder="Location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent rounded-2xl focus:ring-2 focus:ring-primary/20 focus:bg-white focus:border-primary transition-all text-slate-900 text-sm"
-            />
-          </div>
-          <div className="md:col-span-2 relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <input
-              type="text"
-              placeholder="Company"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent rounded-2xl focus:ring-2 focus:ring-primary/20 focus:bg-white focus:border-primary transition-all text-slate-900 text-sm"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <button className="w-full h-full bg-primary text-white font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-md shadow-primary/20 active:scale-[0.98] flex items-center justify-center space-x-2">
-              <Filter className="w-5 h-5" />
-              <span>Advanced</span>
-            </button>
-          </div>
-        </div>
-      </div>
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-slate-900 leading-[1] mb-8">
+              Track your next <br />
+              <span className="text-primary italic">dream job.</span>
+            </h1>
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
+              The modern way to organize your career. Find high-quality tech roles and track every application status in one premium interface.
+            </p>
 
-      {/* Job Listing Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">
-            {search || location || company ? 'Filtered Results' : 'Recommended for You'}
-            <span className="ml-2 text-sm font-medium text-slate-400">({jobs.length} jobs)</span>
-          </h2>
-        </div>
+            {/* Premium Dual-Input Search Bar (Reference Match) */}
+            <div className="max-w-4xl mx-auto mt-12 mb-16 px-4">
+              <div className="bg-white rounded-full border border-slate-200 p-1.5 flex flex-col md:flex-row items-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-500">
 
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 animate-in fade-in transition-all">
-            <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-            <p className="text-slate-500 font-medium">Hunting for the best jobs...</p>
+                {/* Keywords Section */}
+                <div className="flex-1 flex items-center min-w-0 w-full md:w-auto px-4 py-2 border-b md:border-b-0 md:border-r border-slate-100/80 group">
+                  <Search className="w-5 h-5 text-slate-400 group-focus-within:text-[#0055D4] transition-colors shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Intitulé de poste, mots-clés..."
+                    className="w-full bg-transparent border-none focus:ring-0 text-sm md:text-md px-4 py-2 placeholder:text-slate-400 font-medium text-slate-700"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+
+                {/* Location Section */}
+                <div className="flex-1 flex items-center min-w-0 w-full md:w-auto px-4 py-2 group">
+                  <MapPin className="w-5 h-5 text-slate-400 group-focus-within:text-[#0055D4] transition-colors shrink-0" />
+                  <input
+                    type="text"
+                    placeholder="Ville, département, code p..."
+                    className="w-full bg-transparent border-none focus:ring-0 text-sm md:text-md px-4 py-2 placeholder:text-slate-400 font-medium text-slate-700"
+                  />
+                </div>
+
+                {/* Search Button */}
+                <button className="w-full md:w-auto bg-[#0055D4] text-white px-8 py-3.5 rounded-full font-bold text-sm whitespace-nowrap hover:bg-[#0047b3] transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-200">
+                  Lancer la recherche
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Filter Chips */}
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {['Remote', 'Full-time', 'Internship', 'Tech', 'Marketing'].map((tag) => (
+                <button
+                  key={tag}
+                  className="px-6 py-2.5 bg-white/50 hover:bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 transition-all hover:shadow-md active:scale-95"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
           </div>
-        ) : jobs.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-5 fade-in duration-500">
-            {jobs.map((job: any) => (
-              <JobCard key={job.id} job={job} />
+        </section>
+
+        {/* Explore Section */}
+        <section className="max-w-7xl mx-auto px-6 pb-24">
+          <div className="flex flex-col md:flex-row gap-10">
+            {/* Minimal Sidebar Filter */}
+            <aside className={`md:w-64 space-y-8 ${showFilters ? 'block' : 'hidden md:block'}`}>
+              <div className="glass rounded-[2rem] p-8 sticky top-32 border-white/40">
+                <div className="flex items-center justify-between mb-8 md:hidden">
+                  <h3 className="font-bold text-xl">Filters</h3>
+                  <button onClick={() => setShowFilters(false)} className="p-2 bg-slate-100 rounded-full"><X className="w-5 h-5" /></button>
+                </div>
+
+                <div className="space-y-10">
+                  <div>
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                      <MapPin className="w-4 h-4" /> Location
+                    </h4>
+                    <div className="space-y-4">
+                      {['Remote', 'San Francisco', 'Europe', 'Remote-only'].map(loc => (
+                        <label key={loc} className="flex items-center gap-3 cursor-pointer group">
+                          <input type="checkbox" className="w-6 h-6 rounded-xl border-slate-200 text-primary focus:ring-primary/20 transition-all" />
+                          <span className="text-sm font-bold text-slate-600 group-hover:text-primary transition-colors">{loc}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4" /> Type
+                    </h4>
+                    <div className="space-y-4">
+                      {['Contract', 'Full-time', 'Freelance'].map(type => (
+                        <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                          <input type="checkbox" className="w-6 h-6 rounded-xl border-slate-200 text-primary focus:ring-primary/20 transition-all" />
+                          <span className="text-sm font-bold text-slate-600 group-hover:text-primary transition-colors">{type}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* Main Content: Grid */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Open Roles</h2>
+                  <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
+                    {filteredJobs.length} Positions
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="md:hidden flex items-center gap-2 bg-white border border-slate-200 px-5 py-3 rounded-2xl text-sm font-bold shadow-sm"
+                >
+                  <SlidersHorizontal className="w-4 h-4" /> Filters
+                </button>
+              </div>
+
+              {loading ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="h-64 bg-slate-100/50 rounded-[2rem] animate-pulse border border-slate-100" />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {filteredJobs.map((job: any) => (
+                    <JobCard key={job.id} job={job} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white py-12">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold tracking-tight text-slate-900">TrackHire</span>
+            <span className="text-slate-400 text-sm font-medium">© 2026 SaaS Corp</span>
+          </div>
+          <div className="flex gap-8">
+            {['Twitter', 'LinkedIn', 'Product Hunt', 'Contact'].map(link => (
+              <a key={link} href="#" className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors">{link}</a>
             ))}
           </div>
-        ) : (
-          <div className="bg-white border border-dashed border-slate-200 rounded-3xl py-20 flex flex-col items-center justify-center text-center px-4">
-            <div className="bg-slate-50 p-4 rounded-full mb-4">
-              <XCircle className="w-10 h-10 text-slate-300" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900">No jobs found</h3>
-            <p className="mt-2 text-slate-500 max-w-sm">
-              We couldn't find any jobs matching your current search or filters. Try adjusting your criteria.
-            </p>
-            <button
-              onClick={() => { setSearch(''); setLocation(''); setCompany(''); }}
-              className="mt-6 text-primary font-semibold hover:underline"
-            >
-              Clear all filters
-            </button>
-          </div>
-        )}
-      </div>
-    </main>
+        </div>
+      </footer>
+    </div>
   );
 }

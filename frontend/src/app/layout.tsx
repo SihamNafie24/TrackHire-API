@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TrackHire | Professional Job Application Tracker",
-  description: "Track your job applications and land your dream job with ease.",
+  title: "TrackHire | Your Modern Job Tracking SaaS",
+  description: "Experience the next generation of job searching and application tracking with a premium SaaS interface.",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={outfit.className}>
         <AuthProvider>
           <Toaster position="top-right" />
           {children}

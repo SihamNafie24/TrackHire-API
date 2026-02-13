@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import api from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
-import { Building2, MapPin, Calendar, ArrowLeft, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Building2, MapPin, Calendar, ArrowLeft, Loader2, Share2, Bookmark, CheckCircle2, Globe, ArrowUpRight } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -34,7 +34,7 @@ export default function JobDetailsPage() {
 
     const handleApply = async () => {
         if (!user) {
-            toast.error('Please login to apply for this job.');
+            toast.error('Sign in to start your application.');
             router.push('/login');
             return;
         }
@@ -42,7 +42,7 @@ export default function JobDetailsPage() {
         setApplying(true);
         try {
             await api.post('/applications', { jobId: id });
-            toast.success('Application submitted successfully!');
+            toast.success('Your application has been received!');
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Failed to submit application.');
         } finally {
@@ -52,79 +52,126 @@ export default function JobDetailsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4" />
+                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Building view...</p>
             </div>
         );
     }
 
+    if (!job) return null;
+
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-background flex flex-col">
             <Navbar />
 
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <Link
-                    href="/"
-                    className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary transition-colors mb-8 group"
-                >
-                    <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                    Back to all jobs
-                </Link>
+            <div className="flex-1 pt-24 pb-20">
+                <div className="max-w-5xl mx-auto px-6">
 
-                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-                    <div className="bg-slate-900 p-8 text-white relative">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-32 -mt-32" />
+                    <Link
+                        href="/"
+                        className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all mb-12 group"
+                    >
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                        Back to Jobs
+                    </Link>
 
-                        <div className="flex items-center space-x-4 mb-6 relative z-10">
-                            <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                                <Building2 className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-extrabold tracking-tight">{job.title}</h1>
-                                <p className="text-xl text-slate-300">{job.company}</p>
+                    <div className="flex flex-col lg:flex-row gap-10">
+                        {/* Main Content */}
+                        <div className="flex-1">
+                            <div className="glass rounded-[2.5rem] p-8 md:p-12 mb-8 border-white/50">
+                                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+                                    <div className="w-24 h-24 rounded-[2rem] bg-white flex items-center justify-center border border-slate-100 shadow-xl overflow-hidden hover:rotate-3 transition-transform duration-500">
+                                        <Building2 className="w-10 h-10 text-slate-300" />
+                                    </div>
+                                    <div className="flex-1 text-center md:text-left">
+                                        <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
+                                            <span className="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                                                {job.location === 'Remote' ? 'Global Remote' : 'Flexible Hybrid'}
+                                            </span>
+                                            <span className="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                                                High Demand
+                                            </span>
+                                        </div>
+                                        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
+                                            {job.title}
+                                        </h1>
+                                        <div className="mt-6 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3 text-sm font-bold text-slate-500 italic">
+                                            <span className="text-primary not-italic font-black flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                                {job.company}
+                                            </span>
+                                            <span className="flex items-center gap-1.5 not-italic">
+                                                <MapPin className="w-4 h-4" /> {job.location}
+                                            </span>
+                                            <span className="flex items-center gap-1.5 not-italic text-slate-300">
+                                                <Calendar className="w-4 h-4" /> {new Date(job.createdAt).toLocaleDateString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="h-px bg-slate-100 w-full mb-12" />
+
+                                <div className="prose prose-slate max-w-none">
+                                    <h2 className="text-2xl font-bold text-slate-900 mb-6 tracking-tight">Job Overview</h2>
+                                    <div className="text-slate-600 font-medium leading-[1.8] space-y-4">
+                                        {job.description.split('\n').map((para: string, i: number) => (
+                                            para.trim() && <p key={i}>{para}</p>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-4 relative z-10">
-                            <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
-                                <MapPin className="w-4 h-4" />
-                                <span className="text-sm font-medium">{job.location}</span>
-                            </div>
-                            <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/10">
-                                <Calendar className="w-4 h-4" />
-                                <span className="text-sm font-medium">Posted on {new Date(job.createdAt).toLocaleDateString()}</span>
-                            </div>
-                        </div>
-                    </div>
+                        {/* Sidebar: Application Actions */}
+                        <aside className="lg:w-80 h-fit sticky top-32">
+                            <div className="glass rounded-[2rem] p-8 border-white/60 shadow-2xl">
+                                <h3 className="text-lg font-bold text-slate-900 mb-6">Ready to apply?</h3>
+                                <button
+                                    onClick={handleApply}
+                                    disabled={applying}
+                                    className="w-full btn-premium bg-primary text-white py-5 rounded-2xl font-bold text-lg mb-4 flex items-center justify-center gap-3 overflow-hidden group"
+                                >
+                                    {applying ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                                        <>
+                                            Start Application
+                                            <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                        </>
+                                    )}
+                                </button>
+                                <button className="w-full py-4 border-2 border-slate-200 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 mb-8">
+                                    <Bookmark className="w-5 h-5" /> Save Role
+                                </button>
 
-                    <div className="p-8 md:p-12">
-                        <h2 className="text-xl font-bold text-slate-900 mb-6">Job Description</h2>
-                        <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed space-y-4">
-                            {job.description.split('\n').map((para: string, i: number) => (
-                                <p key={i}>{para}</p>
-                            ))}
-                        </div>
-
-                        <div className="mt-12 p-8 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div>
-                                <h3 className="text-lg font-bold text-slate-900">Interested in this position?</h3>
-                                <p className="text-slate-500 text-sm">Submit your application now and our team will review it.</p>
+                                <div className="space-y-6 pt-6 border-t border-slate-100">
+                                    <div className="flex gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-900">Actively Hiring</p>
+                                            <p className="text-xs text-slate-400 font-medium mt-0.5">Response expected in 48h</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                            <Globe className="w-5 h-5 text-blue-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-900">Global Reach</p>
+                                            <p className="text-xs text-slate-400 font-medium mt-0.5">Accepting worldwide candidates</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <button
-                                onClick={handleApply}
-                                disabled={applying}
-                                className="w-full md:w-auto bg-primary text-white px-10 py-4 rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                            >
-                                {applying ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                    <>
-                                        <span>Apply Now</span>
-                                        <CheckCircle2 className="w-5 h-5" />
-                                    </>
-                                )}
-                            </button>
-                        </div>
+
+                            <div className="mt-6 flex justify-center">
+                                <button className="text-xs font-bold text-slate-400 hover:text-primary transition-colors flex items-center gap-2">
+                                    <Share2 className="w-4 h-4" /> Share this position
+                                </button>
+                            </div>
+                        </aside>
                     </div>
                 </div>
             </div>
