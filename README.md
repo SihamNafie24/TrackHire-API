@@ -1,8 +1,8 @@
-# TrackHire API 🚀
+# TrackHire API 
 
 Professional RESTful Job Application Tracker API built with Node.js, TypeScript, and PostgreSQL.
 
-## 🌟 Features
+##  Features
 
 - **Secure Authentication**: JWT-based login and registration with Bcrypt hashing.
 - **Role-Based Access Control (RBAC)**:
@@ -13,7 +13,7 @@ Professional RESTful Job Application Tracker API built with Node.js, TypeScript,
 - **Interactive API Docs**: Fully documented with Swagger UI.
 - **Developer Ready**: Docker and Docker Compose support, clean architecture, and type-safety with TypeScript & Zod.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Runtime**: Node.js
 - **Language**: TypeScript
@@ -24,7 +24,7 @@ Professional RESTful Job Application Tracker API built with Node.js, TypeScript,
 - **Documentation**: Swagger (OpenAPI 3.0)
 - **Containerization**: Docker & Docker Compose
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Node.js (v18+)
@@ -76,7 +76,7 @@ Use the interactive dashboard to test registration, login, and all other endpoin
 docker-compose up --build
 ```
 
-## 📂 Project Structure
+##  Project Structure
 
 ```text
 src/
@@ -90,5 +90,5 @@ src/
  └── server.ts       # Server entry point
 ```
 
-## 📄 License
+##  License
 ISC
