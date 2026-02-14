@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, Globe, Heart, ArrowUpRight, MapPin } from 'lucide-react';
+import { Building2, Globe, ArrowUpRight, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 interface JobCardProps {
@@ -11,6 +11,7 @@ interface JobCardProps {
         company: string;
         location: string;
         createdAt: string;
+        salary?: string;
     };
 }
 
@@ -18,56 +19,54 @@ export default function JobCard({ job }: JobCardProps) {
     const date = new Date(job.createdAt).toLocaleDateString();
 
     return (
-        <div className="group bg-white border border-slate-200/60 rounded-[2rem] p-8 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative flex flex-col h-full">
-            <div className="flex justify-between items-start mb-6">
-                <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:rotate-6 transition-transform duration-500 shadow-sm">
-                    <Building2 className="w-8 h-8 text-slate-400" />
+        <div className="group bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-all duration-200 relative flex flex-col h-full">
+            <div className="flex justify-between items-start mb-5">
+                <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-primary/5 transition-colors duration-300">
+                    <Building2 className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" />
                 </div>
-                <button className="p-3 bg-slate-50 rounded-2xl text-slate-300 hover:text-rose-400 hover:bg-rose-50 transition-all">
-                    <Heart className="w-5 h-5" />
-                </button>
+                <div className="flex flex-col items-end gap-2">
+                    <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border border-emerald-100/50">
+                        {job.location === 'Remote' ? 'Remote' : 'On-site'}
+                    </span>
+                    {job.salary && (
+                        <span className="text-xs font-bold text-slate-900">{job.salary}</span>
+                    )}
+                </div>
             </div>
 
             <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
-                        Open Position
-                    </span>
-                    <div className="flex items-center gap-1.5 text-slate-400">
-                        <Globe className="w-3 h-3" />
-                        <span className="text-[10px] font-bold">{job.location === 'Remote' ? 'Worldwide' : 'Hybrid'}</span>
-                    </div>
-                </div>
-
                 <Link href={`/jobs/${job.id}`}>
-                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2">
+                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors leading-snug mb-2">
                         {job.title}
                     </h3>
                 </Link>
 
-                <p className="text-sm font-semibold text-slate-500 mb-6 flex items-center gap-2 italic">
-                    {job.company}
-                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
-                    <span className="flex items-center gap-1 normal-case not-italic font-medium">
-                        <MapPin className="w-3 h-3" /> {job.location}
-                    </span>
-                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm font-medium text-slate-500">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-slate-900 font-bold">{job.company}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 opacity-60">
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span>{job.location}</span>
+                    </div>
+                </div>
 
-                <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-8 font-medium">
+                <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-6 font-medium opacity-80">
                     {job.description}
                 </p>
             </div>
 
-            <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
-                <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.15em]">
-                    Posted {date}
-                </span>
+            <div className="pt-5 border-t border-slate-50 flex items-center justify-between mt-auto">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>{date}</span>
+                </div>
                 <Link
                     href={`/jobs/${job.id}`}
-                    className="flex items-center gap-1.5 text-primary font-bold text-sm group/btn"
+                    className="flex items-center gap-1 text-primary font-bold text-sm group/btn"
                 >
-                    View Details
-                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
+                    Apply Now
+                    <ArrowUpRight className="w-4 h-4 transition-colors" />
                 </Link>
             </div>
         </div>

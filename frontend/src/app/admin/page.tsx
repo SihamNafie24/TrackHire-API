@@ -107,15 +107,15 @@ export default function AdminDashboard() {
                                     <input
                                         type="text"
                                         placeholder="Filter records..."
-                                        className="w-full bg-white/50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all"
+                                        className="w-full bg-white/50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-blue-500/20 transition-all"
                                     />
                                 </div>
                                 <div className="flex gap-3">
-                                    <button className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:bg-slate-50 transition-colors">
+                                    <button className="btn btn-outline p-3 !px-3">
                                         <Filter className="w-5 h-5" />
                                     </button>
                                     {activeTab === 'jobs' && (
-                                        <button className="btn-premium bg-primary text-white h-12 flex items-center gap-2">
+                                        <button className="btn btn-primary shadow-xl shadow-blue-500/20 h-12">
                                             <Plus className="w-4 h-4" /> Add Vacancy
                                         </button>
                                     )}

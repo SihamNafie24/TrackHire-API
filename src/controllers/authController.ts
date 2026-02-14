@@ -20,4 +20,13 @@ export class AuthController {
             next(error);
         }
     }
+
+    static async getMe(req: any, res: Response, next: NextFunction) {
+        try {
+            const user = req.user;
+            sendResponse(res, 200, true, 'User profile fetched', user);
+        } catch (error) {
+            next(error);
+        }
+    }
 }

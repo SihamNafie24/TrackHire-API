@@ -20,12 +20,12 @@ export default function LoginPage() {
         setLoading(true);
         try {
             const response = await api.post('/auth/login', { email, password });
-            const { token, user } = response.data.data;
-            login(token, user);
-            toast.success('Welcome back!');
-            router.push('/');
+            const { token, user: userData } = response.data.data;
+            login(token, userData);
+            toast.success('Welcome back! Logging you in...');
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Login failed');
+            const message = error.response?.data?.message || 'Invalid email or password';
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -39,7 +39,7 @@ export default function LoginPage() {
 
             <div className="w-full max-w-lg relative z-10">
                 <div className="flex flex-col items-center mb-10 text-center">
-                    <h1 className="text-5xl font-extrabold text-[#111827] mb-4 tracking-tight">Sign in</h1>
+                    <h1 className="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Sign in</h1>
                     <p className="text-slate-400 font-medium">Please login to continue to your account.</p>
                 </div>
 
@@ -51,7 +51,7 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-[#2B79A8] transition-all outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
@@ -64,7 +64,7 @@ export default function LoginPage() {
                                 <input
                                     type="password"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-[#2B79A8] transition-all outline-none pr-12"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none pr-12"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
@@ -75,14 +75,14 @@ export default function LoginPage() {
                         </div>
 
                         <div className="flex items-center gap-3 px-1">
-                            <input type="checkbox" id="keep-logged" className="w-5 h-5 rounded border-slate-300 text-[#2B79A8] focus:ring-[#2B79A8]/20 cursor-pointer" />
+                            <input type="checkbox" id="keep-logged" className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary/20 cursor-pointer" />
                             <label htmlFor="keep-logged" className="text-sm font-bold text-slate-700 cursor-pointer">Keep me logged in</label>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-[#2B79A8] text-white py-4 rounded-xl font-bold text-md flex items-center justify-center gap-3 transition-all hover:bg-[#23638a] shadow-xl shadow-blue-100 active:scale-[0.98]"
+                            className="btn btn-primary w-full shadow-lg shadow-blue-500/20"
                         >
                             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign in"}
                         </button>
@@ -93,14 +93,14 @@ export default function LoginPage() {
                         <div className="relative flex justify-center text-xs font-bold uppercase tracking-widest"><span className="bg-white px-4 text-slate-300">or</span></div>
                     </div>
 
-                    <button className="w-full flex items-center justify-center gap-3 py-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all font-bold text-slate-600 text-sm mb-4 shadow-sm group">
+                    <button className="btn btn-outline w-full mb-4 group">
                         Sign in with Google <Chrome className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" />
                     </button>
                 </div>
 
                 <div className="mt-8 text-center text-sm font-bold text-slate-400 flex items-center justify-center gap-2">
                     Need an account?
-                    <Link href="/register" className="text-[#2B79A8] hover:underline decoration-2 underline-offset-4">Create one</Link>
+                    <Link href="/register" className="text-primary hover:underline decoration-2 underline-offset-4">Create one</Link>
                 </div>
             </div>
         </div>

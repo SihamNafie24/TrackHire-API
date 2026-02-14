@@ -25,12 +25,13 @@ export default function RegisterPage() {
         setLoading(true);
         try {
             const response = await api.post('/auth/register', formData);
-            const { token, user } = response.data.data;
-            login(token, user);
-            toast.success('Account created! Welcome aboard.');
-            router.push('/');
+            const { token, user: userData } = response.data.data;
+            login(token, userData);
+            toast.success('Account created! Welcome to TrackHire.');
         } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            const message = error.response?.data?.message || 'Registration failed. Please try again.';
+            toast.error(message);
+            console.error('Registration error:', error);
         } finally {
             setLoading(false);
         }
@@ -44,7 +45,7 @@ export default function RegisterPage() {
 
             <div className="w-full max-w-2xl relative z-10">
                 <div className="flex flex-col items-center mb-10 text-center">
-                    <h1 className="text-5xl font-extrabold text-[#111827] mb-4 tracking-tight">Sign up</h1>
+                    <h1 className="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Sign up</h1>
                     <p className="text-slate-400 font-medium">Create an account to start your journey.</p>
                 </div>
 
@@ -56,7 +57,7 @@ export default function RegisterPage() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-[#2B79A8] transition-all outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
@@ -67,7 +68,7 @@ export default function RegisterPage() {
                                 <input
                                     type="email"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-[#2B79A8] transition-all outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
@@ -78,7 +79,7 @@ export default function RegisterPage() {
                                 <input
                                     type="password"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-[#2B79A8] transition-all outline-none"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
@@ -93,7 +94,7 @@ export default function RegisterPage() {
                                     onClick={() => setFormData({ ...formData, role: 'USER' })}
                                     className={cn(
                                         "relative p-4 rounded-2xl border-2 text-left transition-all",
-                                        formData.role === 'USER' ? "border-[#2B79A8] bg-blue-50/30" : "border-slate-100 bg-slate-50/50"
+                                        formData.role === 'USER' ? "border-primary bg-blue-50/30" : "border-slate-100 bg-slate-50/50"
                                     )}
                                 >
                                     <p className="font-bold text-slate-900 text-sm">Finding Jobs</p>
@@ -116,7 +117,7 @@ export default function RegisterPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-[#2B79A8] text-white py-4 rounded-xl font-bold text-md flex items-center justify-center gap-3 transition-all hover:bg-[#23638a] shadow-xl shadow-blue-100 active:scale-[0.98]"
+                                className="btn btn-primary w-full shadow-lg shadow-blue-500/20"
                             >
                                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign up"}
                             </button>
@@ -126,7 +127,7 @@ export default function RegisterPage() {
 
                 <div className="mt-8 text-center text-sm font-bold text-slate-400 flex items-center justify-center gap-2">
                     Already have an account?
-                    <Link href="/login" className="text-[#2B79A8] hover:underline decoration-2 underline-offset-4">Log in</Link>
+                    <Link href="/login" className="text-primary hover:underline decoration-2 underline-offset-4">Log in</Link>
                 </div>
             </div>
         </div>

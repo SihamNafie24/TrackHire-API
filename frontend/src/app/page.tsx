@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import JobCard from '@/components/JobCard';
 import api from '@/lib/api';
-import { Search, SlidersHorizontal, MapPin, Briefcase, X } from 'lucide-react';
+import { Search, MapPin, Briefcase, ChevronRight, Star, Users, CheckCircle, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Home() {
   const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   useEffect(() => {
     fetchJobs();
@@ -27,115 +28,178 @@ export default function Home() {
     }
   };
 
-  const filteredJobs = jobs.filter((job: any) =>
-    job.title.toLowerCase().includes(search.toLowerCase()) ||
-    job.company.toLowerCase().includes(search.toLowerCase())
-  );
+  const toggleFilter = (filter: string) => {
+    setActiveFilters(prev =>
+      prev.includes(filter)
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
+  };
+
+  const filteredJobs = jobs.filter((job: any) => {
+    const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase()) ||
+      job.company.toLowerCase().includes(search.toLowerCase());
+
+    if (activeFilters.length === 0) return matchesSearch;
+
+    const matchesFilter = activeFilters.some(filter =>
+      job.location.includes(filter) || job.type?.includes(filter)
+    );
+
+    return matchesSearch && matchesFilter;
+  });
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col font-sans">
       <Navbar />
 
       <main className="flex-1 pt-20">
-        {/* Hero Section */}
-        <section className="relative py-24 px-6 overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl">
-            <div className="absolute top-[-10%] right-[10%] w-[40%] h-[80%] bg-primary/10 rounded-full blur-[120px]" />
-            <div className="absolute bottom-[-10%] left-[10%] w-[40%] h-[80%] bg-secondary/10 rounded-full blur-[120px]" />
-          </div>
-
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-slate-900 leading-[1] mb-8">
-              Track your next <br />
-              <span className="text-primary italic">dream job.</span>
+        {/* Hero Section - Split Layout */}
+        <section className="max-w-6xl mx-auto px-6 py-20 md:py-32 grid md:grid-cols-2 gap-16 items-center overflow-hidden">
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold mb-6">
+              <Star className="w-3 h-3 fill-current" />
+              <span>New: Visual Search Tracking</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1] mb-6">
+              Manage your job search <br />
+              <span className="text-primary">with clarity.</span>
             </h1>
-            <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium">
-              The modern way to organize your career. Find high-quality tech roles and track every application status in one premium interface.
+            <p className="text-lg text-slate-500 max-w-lg mb-10 leading-relaxed">
+              The professional ecosystem for ambitious developers to track, manage, and optimize their career trajectory with data-driven insights.
             </p>
 
-            {/* Premium Dual-Input Search Bar (Reference Match) */}
-            <div className="max-w-4xl mx-auto mt-12 mb-16 px-4">
-              <div className="bg-white rounded-full border border-slate-200 p-1.5 flex flex-col md:flex-row items-center shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all duration-500">
-
-                {/* Keywords Section */}
-                <div className="flex-1 flex items-center min-w-0 w-full md:w-auto px-4 py-2 border-b md:border-b-0 md:border-r border-slate-100/80 group">
-                  <Search className="w-5 h-5 text-slate-400 group-focus-within:text-[#0055D4] transition-colors shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Intitulé de poste, mots-clés..."
-                    className="w-full bg-transparent border-none focus:ring-0 text-sm md:text-md px-4 py-2 placeholder:text-slate-400 font-medium text-slate-700"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
-
-                {/* Location Section */}
-                <div className="flex-1 flex items-center min-w-0 w-full md:w-auto px-4 py-2 group">
-                  <MapPin className="w-5 h-5 text-slate-400 group-focus-within:text-[#0055D4] transition-colors shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Ville, département, code p..."
-                    className="w-full bg-transparent border-none focus:ring-0 text-sm md:text-md px-4 py-2 placeholder:text-slate-400 font-medium text-slate-700"
-                  />
-                </div>
-
-                {/* Search Button */}
-                <button className="w-full md:w-auto bg-[#0055D4] text-white px-8 py-3.5 rounded-full font-bold text-sm whitespace-nowrap hover:bg-[#0047b3] transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-blue-200">
-                  Lancer la recherche
-                </button>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/register"
+                className="btn btn-primary !px-10 !py-4 shadow-xl shadow-blue-500/20"
+              >
+                Get Started Free <ArrowRight className="w-4 h-4" />
+              </Link>
+              <button className="btn btn-outline !px-10 !py-4 transition-all">
+                Watch Demo
+              </button>
             </div>
 
-            {/* Quick Filter Chips */}
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
-              {['Remote', 'Full-time', 'Internship', 'Tech', 'Marketing'].map((tag) => (
-                <button
-                  key={tag}
-                  className="px-6 py-2.5 bg-white/50 hover:bg-white border border-slate-200 rounded-full text-sm font-bold text-slate-600 transition-all hover:shadow-md active:scale-95"
-                >
-                  {tag}
-                </button>
+            <div className="mt-12 flex items-center gap-4 text-slate-400">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200" />
+                ))}
+              </div>
+              <span className="text-xs font-medium">Joined by 2,000+ professionals</span>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/5 rounded-3xl -rotate-2 transform scale-105" />
+            <div className="relative bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden aspect-square md:aspect-video flex items-center justify-center p-8">
+              <div className="w-full h-full bg-slate-50 rounded-2xl border border-slate-100 p-4 flex flex-col gap-4">
+                <div className="h-8 w-1/3 bg-slate-200 rounded-lg animate-pulse" />
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="h-20 bg-primary/10 rounded-xl" />
+                  <div className="h-20 bg-secondary/10 rounded-xl" />
+                  <div className="h-20 bg-slate-100 rounded-xl" />
+                </div>
+                <div className="flex-1 bg-white rounded-xl border border-slate-100 p-4 space-y-3">
+                  <div className="h-4 w-full bg-slate-50 rounded" />
+                  <div className="h-4 w-5/6 bg-slate-50 rounded" />
+                  <div className="h-4 w-4/6 bg-slate-50 rounded" />
+                </div>
+              </div>
+            </div>
+            {/* Floating Metric Card */}
+            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden lg:block animate-bounce-subtle">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Success Rate</p>
+              <p className="text-2xl font-black text-slate-900">+84%</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Social Proof / Metrics */}
+        <section className="bg-slate-50 border-y border-slate-100 py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center mb-16">
+              {[
+                { label: 'Active Jobs', value: '120+', icon: Briefcase },
+                { label: 'Hiring Companies', value: '50+', icon: Users },
+                { label: 'Applications Tracked', value: '1,200+', icon: CheckCircle },
+              ].map((stat, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mx-auto mb-4 text-primary">
+                    <stat.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-3xl font-black text-slate-900 uppercase">{stat.value}</h3>
+                  <p className="text-sm font-semibold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap justify-center items-center gap-12 opacity-40 grayscale">
+              {['Google', 'Airbnb', 'Stripe', 'Figma', 'Slack'].map(logo => (
+                <span key={logo} className="text-xl font-bold tracking-tighter text-slate-900">{logo}</span>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Explore Section */}
-        <section className="max-w-7xl mx-auto px-6 pb-24">
-          <div className="flex flex-col md:flex-row gap-10">
-            {/* Minimal Sidebar Filter */}
-            <aside className={`md:w-64 space-y-8 ${showFilters ? 'block' : 'hidden md:block'}`}>
-              <div className="glass rounded-[2rem] p-8 sticky top-32 border-white/40">
-                <div className="flex items-center justify-between mb-8 md:hidden">
-                  <h3 className="font-bold text-xl">Filters</h3>
-                  <button onClick={() => setShowFilters(false)} className="p-2 bg-slate-100 rounded-full"><X className="w-5 h-5" /></button>
+        {/* Job Board Section */}
+        <section className="max-w-6xl mx-auto px-6 py-24">
+          <div className="flex flex-col md:flex-row gap-12">
+            {/* Modern Sidebar with Toggles */}
+            <aside className="md:w-72 space-y-10">
+              <div className="sticky top-24">
+                <div className="mb-10">
+                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] mb-6">Search</h3>
+                  <div className="relative group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                    <input
+                      type="text"
+                      placeholder="Title or company..."
+                      className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-10">
+                <div className="space-y-8">
                   <div>
-                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                      <MapPin className="w-4 h-4" /> Location
-                    </h4>
-                    <div className="space-y-4">
-                      {['Remote', 'San Francisco', 'Europe', 'Remote-only'].map(loc => (
-                        <label key={loc} className="flex items-center gap-3 cursor-pointer group">
-                          <input type="checkbox" className="w-6 h-6 rounded-xl border-slate-200 text-primary focus:ring-primary/20 transition-all" />
-                          <span className="text-sm font-bold text-slate-600 group-hover:text-primary transition-colors">{loc}</span>
-                        </label>
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-primary" /> Location
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {['Remote', 'San Francisco', 'London', 'Berlin'].map(loc => (
+                        <button
+                          key={loc}
+                          onClick={() => toggleFilter(loc)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${activeFilters.includes(loc)
+                            ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-primary/40'
+                            }`}
+                        >
+                          {loc}
+                        </button>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4" /> Type
-                    </h4>
-                    <div className="space-y-4">
-                      {['Contract', 'Full-time', 'Freelance'].map(type => (
-                        <label key={type} className="flex items-center gap-3 cursor-pointer group">
-                          <input type="checkbox" className="w-6 h-6 rounded-xl border-slate-200 text-primary focus:ring-primary/20 transition-all" />
-                          <span className="text-sm font-bold text-slate-600 group-hover:text-primary transition-colors">{type}</span>
-                        </label>
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-primary" /> Contract
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {['Full-time', 'Contract', 'Internship'].map(type => (
+                        <button
+                          key={type}
+                          onClick={() => toggleFilter(type)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${activeFilters.includes(type)
+                            ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-primary/40'
+                            }`}
+                        >
+                          {type}
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -143,34 +207,37 @@ export default function Home() {
               </div>
             </aside>
 
-            {/* Main Content: Grid */}
+            {/* Main Content */}
             <div className="flex-1">
               <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Open Roles</h2>
-                  <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
-                    {filteredJobs.length} Positions
-                  </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">Open Positions</h2>
+                  <p className="text-sm font-medium text-slate-500">Discover your next career milestone.</p>
                 </div>
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="md:hidden flex items-center gap-2 bg-white border border-slate-200 px-5 py-3 rounded-2xl text-sm font-bold shadow-sm"
-                >
-                  <SlidersHorizontal className="w-4 h-4" /> Filters
-                </button>
+                <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
+                  {filteredJobs.length} Results
+                </div>
               </div>
 
               {loading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[1, 2, 3, 4].map((n) => (
-                    <div key={n} className="h-64 bg-slate-100/50 rounded-[2rem] animate-pulse border border-slate-100" />
+                    <div key={n} className="h-64 bg-slate-100/50 rounded-2xl animate-pulse border border-slate-100" />
                   ))}
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              ) : filteredJobs.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredJobs.map((job: any) => (
                     <JobCard key={job.id} job={job} />
                   ))}
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                  <div className="w-16 h-16 bg-white rounded-2xl border border-slate-100 flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <Search className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">No matching roles found</h3>
+                  <p className="text-slate-500 font-medium">Try adjusting your filters or search terms.</p>
                 </div>
               )}
             </div>
@@ -179,16 +246,44 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold tracking-tight text-slate-900">TrackHire</span>
-            <span className="text-slate-400 text-sm font-medium">© 2026 SaaS Corp</span>
+      <footer className="border-t border-slate-200 bg-white py-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-12">
+            <div className="space-y-4 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <div className="w-8 h-8 bg-primary flex items-center justify-center rounded-lg text-white font-black text-xs">TH</div>
+                <span className="text-xl font-bold text-slate-900 tracking-tight">TrackHire</span>
+              </div>
+              <p className="text-sm text-slate-400 font-medium max-w-xs">
+                Empowering developers to navigate their career with confidence and precision.
+              </p>
+            </div>
+
+            <div className="flex gap-12">
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">Platform</h4>
+                <div className="flex flex-col gap-2">
+                  {['Explore', 'Dashboard', 'Pricing'].map(l => (
+                    <a key={l} href="#" className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors">{l}</a>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">Company</h4>
+                <div className="flex flex-col gap-2">
+                  {['About', 'Contact', 'Twitter'].map(l => (
+                    <a key={l} href="#" className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors">{l}</a>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-8">
-            {['Twitter', 'LinkedIn', 'Product Hunt', 'Contact'].map(link => (
-              <a key={link} href="#" className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors">{link}</a>
-            ))}
+          <div className="mt-16 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+            <span className="text-xs font-medium text-slate-400">© 2026 TrackHire Inc. All rights reserved.</span>
+            <div className="flex gap-6 text-xs font-medium text-slate-400">
+              <a href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-slate-900 transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>

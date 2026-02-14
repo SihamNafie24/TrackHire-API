@@ -21,24 +21,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     useEffect(() => {
-        const savedUser = Cookies.get('user');
-        const token = Cookies.get('token');
+        const checkAuth = async () => {
+            const token = Cookies.get('token');
+            if (token) {
+                try {
+                    const response = await api.get('/auth/me');
+                    if (response.data.success) {
+                        setUser(response.data.data);
+                    } else {
+                        throw new Error('Invalid session');
+                    }
+                } catch (error) {
+                    console.error('Session validation failed', error);
+                    logout();
+                }
+            }
+            setLoading(false);
+        };
 
-        if (savedUser && token) {
-            setUser(JSON.parse(savedUser));
-        }
-        setLoading(false);
+        checkAuth();
     }, []);
 
-    const login = (token: string, user: User) => {
-        Cookies.set('token', token, { expires: 7 });
-        Cookies.set('user', JSON.stringify(user), { expires: 7 });
-        setUser(user);
+    const login = (token: string, userData: User) => {
+        Cookies.set('token', token, { expires: 7, secure: true, sameSite: 'strict' });
+        setUser(userData);
+        router.push('/dashboard');
     };
 
     const logout = () => {
         Cookies.remove('token');
-        Cookies.remove('user');
         setUser(null);
         router.push('/login');
     };
