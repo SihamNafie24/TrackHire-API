@@ -62,14 +62,14 @@ Professional RESTful Job Application Tracker API built with Node.js, TypeScript,
    npm run dev
    ```
 
-## 📖 API Documentation
+##  API Documentation
 
 Once the server is running, visit:
 `http://localhost:5000/api-docs`
 
 Use the interactive dashboard to test registration, login, and all other endpoints.
 
-## 🐳 Running with Docker
+##  Running with Docker
 
 ```bash
 # Start the database and app
