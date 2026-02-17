@@ -112,8 +112,12 @@ export default function Home() {
                 className="group bg-white rounded-2xl p-6 border border-slate-200 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all"
               >
                 <div className="flex gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                    <Building2 className="w-6 h-6 text-slate-300" />
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                    {job.company?.logoUrl ? (
+                      <img src={job.company.logoUrl} alt={job.company.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <Building2 className="w-6 h-6 text-slate-300" />
+                    )}
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
@@ -127,15 +131,15 @@ export default function Home() {
                     <div className="flex items-center gap-4 text-slate-500 text-xs font-semibold">
                       <span className="flex items-center gap-1.5 text-primary">
                         <Building2 className="w-3.5 h-3.5" />
-                        {job.company}
+                        {job.company?.name}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5" />
-                        {job.location}
+                        {job.company?.location}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Briefcase className="w-3.5 h-3.5" />
-                        Full-time
+                        {job.type.replace('_', ' ').toLowerCase()}
                       </span>
                     </div>
                   </div>

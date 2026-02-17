@@ -21,11 +21,16 @@ export class JobService {
         }
 
         if (location) {
-            where.location = { contains: location, mode: 'insensitive' };
+            where.company = {
+                location: { contains: location, mode: 'insensitive' }
+            };
         }
 
         if (company) {
-            where.company = { contains: company, mode: 'insensitive' };
+            where.company = {
+                ...where.company,
+                name: { contains: company, mode: 'insensitive' }
+            };
         }
 
         const [jobs, total] = await Promise.all([
@@ -34,6 +39,9 @@ export class JobService {
                 skip,
                 take,
                 orderBy: { createdAt: 'desc' },
+                include: {
+                    company: true,
+                },
             }),
             prisma.job.count({ where }),
         ]);
@@ -50,7 +58,10 @@ export class JobService {
     }
 
     static async getJobById(id: string) {
-        const job = await prisma.job.findUnique({ where: { id } });
+        const job = await prisma.job.findUnique({
+            where: { id },
+            include: { company: true }
+        });
         if (!job) {
             throw new AppError(404, 'Job not found');
         }
@@ -62,6 +73,7 @@ export class JobService {
         return await prisma.job.update({
             where: { id },
             data,
+            include: { company: true }
         });
     }
 

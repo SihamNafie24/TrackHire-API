@@ -23,13 +23,26 @@ export class ApplicationService {
                 userId,
                 jobId,
             },
+            include: {
+                job: {
+                    include: {
+                        company: true
+                    }
+                }
+            }
         });
     }
 
     static async getMyApplications(userId: string) {
         return await prisma.application.findMany({
             where: { userId },
-            include: { job: true },
+            include: {
+                job: {
+                    include: {
+                        company: true
+                    }
+                }
+            },
             orderBy: { appliedAt: 'desc' },
         });
     }
@@ -38,7 +51,11 @@ export class ApplicationService {
         return await prisma.application.findMany({
             include: {
                 user: { select: { id: true, name: true, email: true } },
-                job: true,
+                job: {
+                    include: {
+                        company: true
+                    }
+                },
             },
             orderBy: { appliedAt: 'desc' },
         });
@@ -58,6 +75,13 @@ export class ApplicationService {
         return await prisma.application.update({
             where: { id },
             data: { status },
+            include: {
+                job: {
+                    include: {
+                        company: true
+                    }
+                }
+            }
         });
     }
 }

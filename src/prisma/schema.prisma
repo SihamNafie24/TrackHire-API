@@ -12,11 +12,29 @@ enum Role {
   ADMIN
 }
 
-enum ApplicationStatus {
-  Applied
-  Interview
-  Accepted
-  Rejected
+enum JobType {
+  FULL_TIME
+  CONTRACT
+  FREELANCE
+}
+
+enum LocationType {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+enum AppStatus {
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+  ACCEPTED
 }
 
 model User {
@@ -26,32 +44,64 @@ model User {
   password     String
   role         Role          @default(USER)
   createdAt    DateTime      @default(now())
+  profile      Profile?
   applications Application[]
 
   @@map("users")
 }
 
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  fullName  String
+  title     String
+  bio       String?
+  resumeUrl String?
+  skills    String[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  logoUrl   String?
+  location  String
+  website   String?
+  jobs      Job[]
+  createdAt DateTime @default(now())
+
+  @@map("companies")
+}
+
 model Job {
-  id           String        @id @default(uuid())
+  id           String       @id @default(uuid())
+  companyId    String
   title        String
   description  String
-  company      String
-  location     String
-  createdAt    DateTime      @default(now())
+  requirements String[]
+  salaryRange  String?
+  type         JobType      @default(FULL_TIME)
+  locationType LocationType @default(ONSITE)
+  status       JobStatus    @default(OPEN)
+  createdAt    DateTime     @default(now())
+  company      Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
   applications Application[]
 
   @@map("jobs")
 }
 
 model Application {
-  id        String            @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
   jobId     String
-  status    ApplicationStatus @default(Applied)
-  appliedAt DateTime          @default(now())
+  status    AppStatus @default(APPLIED)
+  appliedAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, jobId])
   @@map("applications")
 }

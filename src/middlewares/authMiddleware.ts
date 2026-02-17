@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { AppError } from './errorHandler';
 import prisma from '../prisma/client';
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
     user?: any;
 }
 

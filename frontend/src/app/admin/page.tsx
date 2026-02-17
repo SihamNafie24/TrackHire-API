@@ -151,16 +151,20 @@ export default function AdminDashboard() {
                                                 <tr key={job.id} className="hover:bg-primary/[0.02] transition-colors group">
                                                     <td className="px-10 py-7">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 group-hover:rotate-6 transition-transform">
-                                                                <Briefcase className="w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
+                                                            <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 group-hover:rotate-6 transition-transform overflow-hidden">
+                                                                {job.company?.logoUrl ? (
+                                                                    <img src={job.company.logoUrl} alt={job.company.name} className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <Briefcase className="w-6 h-6 text-slate-300 group-hover:text-primary transition-colors" />
+                                                                )}
                                                             </div>
                                                             <div className="font-bold text-slate-900 text-lg">{job.title}</div>
                                                         </div>
                                                     </td>
                                                     <td className="px-10 py-7">
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-bold text-slate-700">{job.company}</span>
-                                                            <span className="text-xs font-semibold text-slate-400">{job.location}</span>
+                                                            <span className="text-sm font-bold text-slate-700">{job.company?.name || 'Unknown Company'}</span>
+                                                            <span className="text-xs font-semibold text-slate-400">{job.company?.location}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-10 py-7 text-center">
@@ -198,7 +202,7 @@ export default function AdminDashboard() {
                                                     <td className="px-10 py-7">
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold text-slate-700">{app.job.title}</span>
-                                                            <span className="text-xs font-semibold text-slate-400">{app.job.company}</span>
+                                                            <span className="text-xs font-semibold text-slate-400">{app.job.company?.name}</span>
                                                         </div>
                                                     </td>
                                                     <td className="px-10 py-7 text-center">

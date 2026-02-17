@@ -82,15 +82,19 @@ export default function JobDetailsPage() {
                             <div className="glass rounded-[2.5rem] p-8 md:p-12 mb-8 border-white/50">
                                 <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
                                     <div className="w-24 h-24 rounded-[2rem] bg-white flex items-center justify-center border border-slate-100 shadow-xl overflow-hidden hover:rotate-3 transition-transform duration-500">
-                                        <Building2 className="w-10 h-10 text-slate-300" />
+                                        {job.company?.logoUrl ? (
+                                            <img src={job.company.logoUrl} alt={job.company.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Building2 className="w-10 h-10 text-slate-300" />
+                                        )}
                                     </div>
                                     <div className="flex-1 text-center md:text-left">
                                         <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-4">
                                             <span className="bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
-                                                {job.location === 'Remote' ? 'Global Remote' : 'Flexible Hybrid'}
+                                                {job.locationType.replace('_', ' ').toLowerCase()}
                                             </span>
                                             <span className="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
-                                                High Demand
+                                                {job.type.replace('_', ' ').toLowerCase()}
                                             </span>
                                         </div>
                                         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
@@ -99,10 +103,10 @@ export default function JobDetailsPage() {
                                         <div className="mt-6 flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3 text-sm font-bold text-slate-500 italic">
                                             <span className="text-primary not-italic font-black flex items-center gap-2">
                                                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                                {job.company}
+                                                {job.company?.name}
                                             </span>
                                             <span className="flex items-center gap-1.5 not-italic">
-                                                <MapPin className="w-4 h-4" /> {job.location}
+                                                <MapPin className="w-4 h-4" /> {job.company?.location}
                                             </span>
                                             <span className="flex items-center gap-1.5 not-italic text-slate-300">
                                                 <Calendar className="w-4 h-4" /> {new Date(job.createdAt).toLocaleDateString()}

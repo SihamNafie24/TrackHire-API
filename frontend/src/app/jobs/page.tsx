@@ -157,18 +157,24 @@ export default function JobsPage() {
                                     )}
                                 >
                                     <div className="flex gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0">
-                                            <Building2 className="w-6 h-6 text-slate-300" />
+                                        <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                            {job.company?.logoUrl ? (
+                                                <img src={job.company.logoUrl} alt={job.company.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Building2 className="w-6 h-6 text-slate-300" />
+                                            )}
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start">
                                                 <h4 className="font-bold text-slate-900 leading-tight">{job.title}</h4>
-                                                <span className="text-[10px] font-black text-slate-400">2d ago</span>
+                                                <span className="text-[10px] font-black text-slate-400">
+                                                    {new Date(job.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                </span>
                                             </div>
-                                            <p className="text-xs font-bold text-primary mb-3">{job.company}</p>
+                                            <p className="text-xs font-bold text-primary mb-3">{job.company?.name || 'Unknown Company'}</p>
                                             <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                                <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3" /> {job.location}</span>
-                                                <span className="flex items-center gap-1.5"><DollarSign className="w-3 h-3" /> $120k - $160k</span>
+                                                <span className="flex items-center gap-1.5"><MapPin className="w-3 h-3" /> {job.company?.location || 'Remote'}</span>
+                                                <span className="flex items-center gap-1.5"><DollarSign className="w-3 h-3" /> {job.salaryRange || 'Competitive'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -186,8 +192,12 @@ export default function JobsPage() {
                         ) : selectedJob ? (
                             <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <div className="flex items-start justify-between mb-8">
-                                    <div className="w-20 h-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
-                                        <Building2 className="w-10 h-10 text-slate-300" />
+                                    <div className="w-20 h-20 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden">
+                                        {selectedJob.company?.logoUrl ? (
+                                            <img src={selectedJob.company.logoUrl} alt={selectedJob.company.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Building2 className="w-10 h-10 text-slate-300" />
+                                        )}
                                     </div>
                                     <div className="flex gap-2">
                                         <button className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-400 hover:text-primary hover:border-primary/20 transition-all">
@@ -204,28 +214,28 @@ export default function JobsPage() {
                                         {selectedJob.title}
                                     </h2>
                                     <div className="flex items-center gap-3">
-                                        <p className="text-sm font-bold text-primary">{selectedJob.company}</p>
+                                        <p className="text-sm font-bold text-primary">{selectedJob.company?.name}</p>
                                         <div className="w-1 h-1 rounded-full bg-slate-200" />
-                                        <p className="text-sm font-bold text-slate-500">{selectedJob.location}</p>
+                                        <p className="text-sm font-bold text-slate-500">{selectedJob.company?.location}</p>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mb-10">
                                     <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Monthly Salary</p>
-                                        <p className="font-bold text-slate-900">$10k - $14k</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Salary Range</p>
+                                        <p className="font-bold text-slate-900">{selectedJob.salaryRange || 'Competitive'}</p>
                                     </div>
                                     <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Job Type</p>
-                                        <p className="font-bold text-slate-900">Full-time</p>
+                                        <p className="font-bold text-slate-900">{selectedJob.type}</p>
                                     </div>
                                     <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Employees</p>
-                                        <p className="font-bold text-slate-900">50 - 200</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Status</p>
+                                        <p className="font-bold text-slate-900">{selectedJob.status}</p>
                                     </div>
                                     <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Experience</p>
-                                        <p className="font-bold text-slate-900">Senior Level</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Location</p>
+                                        <p className="font-bold text-slate-900">{selectedJob.locationType}</p>
                                     </div>
                                 </div>
 
@@ -236,16 +246,18 @@ export default function JobsPage() {
                                             {selectedJob.description}
                                         </p>
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-slate-900 mb-4">Required Skills</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            {['React.js', 'TypeScript', 'Node.js', 'Tailwind CSS', 'AWS', 'System Design'].map(skill => (
-                                                <span key={skill} className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600">
-                                                    {skill}
-                                                </span>
-                                            ))}
+                                    {selectedJob.requirements && selectedJob.requirements.length > 0 && (
+                                        <div>
+                                            <h3 className="font-bold text-slate-900 mb-4">Required Skills</h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {selectedJob.requirements.map((skill: string) => (
+                                                    <span key={skill} className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-slate-600">
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
 
                                 {/* Floating Action Footer for Detail View */}
