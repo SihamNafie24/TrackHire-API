@@ -22,7 +22,8 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: 'Explore', href: '/' },
+        { name: 'Home', href: '/' },
+        { name: 'Jobs', href: '/jobs' },
         ...(user ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
     ];
 

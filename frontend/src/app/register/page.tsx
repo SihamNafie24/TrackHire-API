@@ -27,107 +27,104 @@ export default function RegisterPage() {
             const response = await api.post('/auth/register', formData);
             const { token, user: userData } = response.data.data;
             login(token, userData);
-            toast.success('Account created! Welcome to TrackHire.');
+            toast.success('Account created.');
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Registration failed. Please try again.';
+            const message = error.response?.data?.message || 'Registration failed.';
             toast.error(message);
-            console.error('Registration error:', error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Accents */}
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]" />
-            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 rounded-full blur-[120px]" />
-
-            <div className="w-full max-w-2xl relative z-10">
-                <div className="flex flex-col items-center mb-10 text-center">
-                    <h1 className="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">Sign up</h1>
-                    <p className="text-slate-400 font-medium">Create an account to start your journey.</p>
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
+            <div className="w-full max-w-[480px]">
+                <div className="flex flex-col mb-8">
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Create account</h1>
+                    <p className="text-sm font-medium text-slate-500">Start your journey with TrackHire.</p>
                 </div>
 
-                <div className="bg-white rounded-3xl p-10 md:p-12 border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className="space-y-6">
-                            <div className="space-y-2 relative">
-                                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold text-slate-400 z-20">Full Name</label>
+                <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Full name</label>
                                 <input
                                     type="text"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                                    placeholder="John Doe"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 />
                             </div>
 
-                            <div className="space-y-2 relative">
-                                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold text-slate-400 z-20">Email</label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Email address</label>
                                 <input
                                     type="email"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                                    placeholder="name@company.com"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
                             </div>
 
-                            <div className="space-y-2 relative">
-                                <label className="absolute -top-2.5 left-4 bg-white px-2 text-[10px] font-bold text-slate-400 z-20">Password</label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Password</label>
                                 <input
                                     type="password"
                                     required
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-4 text-sm font-medium focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                                    placeholder="••••••••"
+                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            <label className="text-xs font-bold text-slate-500 ml-1 block">Account Type</label>
-                            <div className="grid grid-cols-1 gap-4">
+                        <div className="space-y-3">
+                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Account purpose</label>
+                            <div className="grid grid-cols-2 gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, role: 'USER' })}
                                     className={cn(
-                                        "relative p-4 rounded-2xl border-2 text-left transition-all",
-                                        formData.role === 'USER' ? "border-primary bg-blue-50/30" : "border-slate-100 bg-slate-50/50"
+                                        "p-3 rounded-xl border-2 text-left transition-all",
+                                        formData.role === 'USER' ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 bg-white hover:border-slate-200"
                                     )}
                                 >
-                                    <p className="font-bold text-slate-900 text-sm">Finding Jobs</p>
-                                    <p className="text-[10px] text-slate-400 font-medium">I want to track applications.</p>
+                                    <p className="font-bold text-slate-900 text-xs">Finding roles</p>
+                                    <p className="text-[10px] text-slate-400 font-medium">I want to track jobs.</p>
                                 </button>
 
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, role: 'ADMIN' })}
                                     className={cn(
-                                        "relative p-4 rounded-2xl border-2 text-left transition-all",
-                                        formData.role === 'ADMIN' ? "border-secondary bg-pink-50/30" : "border-slate-100 bg-slate-50/50"
+                                        "p-3 rounded-xl border-2 text-left transition-all",
+                                        formData.role === 'ADMIN' ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 bg-white hover:border-slate-200"
                                     )}
                                 >
-                                    <p className="font-bold text-slate-900 text-sm">Recruiting</p>
-                                    <p className="text-[10px] text-slate-400 font-medium">I'm looking to post jobs.</p>
+                                    <p className="font-bold text-slate-900 text-xs">Recruiting</p>
+                                    <p className="text-[10px] text-slate-400 font-medium">I'm looking to hire.</p>
                                 </button>
                             </div>
-
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="btn btn-primary w-full shadow-lg shadow-blue-500/20"
-                            >
-                                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign up"}
-                            </button>
                         </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="btn btn-primary w-full py-3 text-sm font-bold shadow-sm"
+                        >
+                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Create TrackHire account"}
+                        </button>
                     </form>
                 </div>
 
-                <div className="mt-8 text-center text-sm font-bold text-slate-400 flex items-center justify-center gap-2">
-                    Already have an account?
-                    <Link href="/login" className="text-primary hover:underline decoration-2 underline-offset-4">Log in</Link>
+                <div className="mt-8 text-center text-xs font-bold text-slate-400">
+                    Existing user? <Link href="/login" className="text-primary hover:underline decoration-2 underline-offset-4">Sign in here</Link>
                 </div>
             </div>
         </div>

@@ -36,10 +36,11 @@ export class ApplicationController {
         }
     }
 
-    static async updateApplicationStatus(req: Request, res: Response, next: NextFunction) {
+    static async updateApplicationStatus(req: AuthRequest, res: Response, next: NextFunction) {
         try {
             const { status } = req.body;
-            const application = await ApplicationService.updateApplicationStatus(req.params.id as string, status);
+            const userId = req.user.role === 'ADMIN' ? undefined : req.user.id;
+            const application = await ApplicationService.updateApplicationStatus(req.params.id as string, status, userId);
             sendResponse(res, 200, true, 'Application status updated successfully', application);
         } catch (error) {
             next(error);

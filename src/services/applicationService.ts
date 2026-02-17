@@ -44,10 +44,15 @@ export class ApplicationService {
         });
     }
 
-    static async updateApplicationStatus(id: string, status: any) {
+    static async updateApplicationStatus(id: string, status: any, userId?: string) {
         const application = await prisma.application.findUnique({ where: { id } });
         if (!application) {
             throw new AppError(404, 'Application not found');
+        }
+
+        // Check ownership if userId is provided
+        if (userId && application.userId !== userId) {
+            throw new AppError(403, 'You do not have permission to update this application');
         }
 
         return await prisma.application.update({

@@ -12,7 +12,7 @@ router.get('/', authenticate, authorize('ADMIN'), ApplicationController.getAllAp
 router.patch(
     '/:id/status',
     authenticate,
-    authorize('ADMIN'),
+    authorize('ADMIN', 'USER'),
     validate(updateApplicationStatusSchema),
     ApplicationController.updateApplicationStatus
 );
