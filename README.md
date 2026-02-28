@@ -91,4 +91,4 @@ src/
 ```
 
 ##  License
-ISC © 2026 Siham Nafie — All rights reserved.
+ISC © 2026 Siham Nafie - All rights reserved.
